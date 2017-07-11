@@ -18,8 +18,8 @@ class DataFrameProviderPrivate {
 public:
 	DataFrameProviderPrivate();
 	~DataFrameProviderPrivate();
-	void initialize();
-	bool isInitialized();
+	void initialize(const std::string& url, const std::string& user, const std::string& pass, const std::string& database);
+	bool isInitialized() const { return m_isInitialized; }
 	std::shared_ptr<sql::Statement> statement() { return m_sqlStatement; }
 private:
 	bool m_isInitialized = false;\
@@ -37,11 +37,11 @@ DataFrameProviderPrivate::~DataFrameProviderPrivate() {
 	}
 }
 
-void DataFrameProviderPrivate::initialize(const std::string&  host, const std::string& user, const std::string& pass, const std::string& database {
+void DataFrameProviderPrivate::initialize(const std::string& url, const std::string& user, const std::string& pass, const std::string& database) {
 	sql::Driver* driver = get_driver_instance();
 	m_sqlConnection.reset(driver->connect(url, user, pass));
 	m_sqlConnection->setSchema(database);
-	m_sqlStatement->reset (m_sqlConnection->createStatement());
+	m_sqlStatement.reset(m_sqlConnection->createStatement());
 }
 
 
@@ -52,7 +52,7 @@ void DataFrameProvider::load(const std::string& file)
 	if (!m_d->isInitialized())
 	{
 		// throw ....
-		m_d->initialize();
+		m_d->initialize(TARGET_HOST, TARGET_USER, TARGET_PASS, TARGET_DB);
 		return;
 	}
 	if (file.empty())
@@ -95,7 +95,7 @@ void DataFrameProvider::load(const std::string& file)
 	{
 		// TODO split line and convert to a DataFrame
 		DataFrame df;
-		fromString(line, df);
+		//fromString(line, df);
 		append(df);
 	}
 #endif
@@ -104,9 +104,9 @@ void DataFrameProvider::load(const std::string& file)
 
 std::vector<DataFrame> DataFrameProvider::execute(const std::string& query) {
 
-
+	return std::vector<DataFrame>();
 }
 
 void DataFrameProvider::append(const DataFrame& df) {
-	m_d->statement->execute("....");
+	m_d->statement()->execute("....");
 }

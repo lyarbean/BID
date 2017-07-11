@@ -20,7 +20,7 @@ public:
 	std::vector<DataFrame> execute(const std::string& query);
 private:
 	// write
-	void append(const DataFrame&) = 0;
+	void append(const DataFrame&);
 private:
 	std::shared_ptr<DataFrameProviderPrivate> m_d;
 };
